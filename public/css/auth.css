@@ -1,0 +1,88 @@
+/* Auth pages (Sign in / Admin sign in / Create account). Needs estudyantipid.css for the tokens. */
+
+.auth { display: flex; min-height: 100vh; background: var(--bg); }
+
+/* ---- Left: lime hero ---- */
+.auth__hero {
+  position: relative; flex: 1 1 0; min-width: 0; min-height: 900px;
+  background: var(--lime); overflow: hidden;
+}
+.auth__ring {
+  position: absolute; top: -96px; right: -96px; width: 384px; height: 384px;
+  border: 40px solid rgba(26, 46, 5, 0.1); border-radius: 9999px;
+}
+.auth__lockup { position: absolute; top: 143px; left: 114px; display: flex; align-items: center; }
+.auth__logo { position: relative; width: 95px; height: 85px; flex: none; overflow: hidden; }
+.auth__logo img {
+  position: absolute; max-width: none;
+  height: 160%; width: 262.46%; left: -82.28%; top: -32.94%;
+}
+.auth__wordmark {
+  font-family: var(--font-display); font-weight: 800; font-size: 50px; line-height: 32px;
+  letter-spacing: -0.6px; color: #fff; white-space: nowrap;
+}
+.auth__copy {
+  position: absolute; top: 304.8px; left: 48px; right: 48px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.auth__headline {
+  font-family: var(--font-display); font-weight: 800; font-size: 72px; line-height: 68.4px;
+  letter-spacing: -1.8px; color: var(--lime-ink);
+}
+.auth__tagline { max-width: 448px; font-size: 18px; line-height: 28px; color: var(--lime-ink); opacity: .8; }
+
+/* ---- Right: form ---- */
+.auth__panel {
+  flex: 1 1 0; min-width: 0; padding: 48px;
+  display: flex; align-items: center; justify-content: center;
+}
+.auth-form { width: 100%; max-width: 384px; display: flex; flex-direction: column; gap: 8px; }
+.auth-form__title {
+  font-family: var(--font-display); font-weight: 800; font-size: 36px; line-height: 40px; letter-spacing: -0.9px;
+}
+.auth-form__sub { font-size: 16px; line-height: 24px; color: var(--muted); margin-bottom: 24px; }
+
+.role-tabs { display: flex; padding: 4px; background: var(--track); border-radius: 9999px; }
+.role-tabs__item {
+  flex: 1; padding: 10px 16px; text-align: center; border-radius: 9999px;
+  font-weight: 600; font-size: 14px; line-height: 20px; color: var(--muted);
+}
+.role-tabs__item.is-active { background: var(--lime); color: var(--lime-ink); }
+
+.field { display: flex; flex-direction: column; gap: 6px; padding-top: 8px; }
+.role-tabs + .field { padding-top: 16px; }
+.field--last { padding-bottom: 16px; }
+.field__label { font-weight: 500; font-size: 14px; line-height: 20px; color: var(--ink); }
+.field__error { font-size: 13px; line-height: 18px; color: var(--danger); }
+
+.input {
+  width: 100%; padding: 14px 17px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+  font: 500 14px var(--font-body); color: var(--ink);
+}
+.input::placeholder { color: rgba(23, 32, 12, 0.5); }
+.input:focus { outline: 2px solid var(--lime-ring); outline-offset: 1px; }
+.input.is-invalid { border-color: var(--danger); }
+select.input { padding: 13px 17px; }
+
+.btn-primary {
+  display: flex; align-items: center; justify-content: center; width: 100%;
+  padding: 14px 20px; border: 0; border-radius: 9999px; cursor: pointer;
+  background: var(--lime); color: var(--lime-ink);
+  font: 600 14px/20px var(--font-body);
+}
+.btn-primary:hover { filter: brightness(.96); }
+
+.auth-form__foot { padding-top: 16px; text-align: center; font-size: 14px; line-height: 20px; color: var(--muted); }
+.auth-form__foot a { color: var(--pill-ink); font-weight: 600; }
+
+/* ---- Smaller screens (design is 1440px) ---- */
+@media (max-width: 900px) {
+  .auth { flex-direction: column; }
+  .auth__hero { min-height: 0; padding: 40px 24px; }
+  .auth__lockup, .auth__copy { position: static; }
+  .auth__copy { margin-top: 32px; }
+  .auth__headline { font-size: 44px; line-height: 1.05; letter-spacing: -1px; }
+  .auth__wordmark { font-size: 36px; }
+  .auth__panel { padding: 32px 24px; }
+}
