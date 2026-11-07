@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Models\Expense;
 use App\Models\SavingsDeposit;
 use App\Models\User;
@@ -11,6 +12,9 @@ use Illuminate\Support\Collection;
 /**
  * One place that works out "this week" (Monday to Sunday) for a student,
  * so the Dashboard, Budgets and Analytics pages always agree.
+ *
+ * Date ranges use whereDate() on purpose: it works whether the database stored
+ * "2026-11-08" or "2026-11-08 00:00:00", so Sunday is never left out.
  */
 class WeeklySummary
 {
@@ -22,10 +26,8 @@ class WeeklySummary
     public function __construct(private User $user)
     {
         $this->expenses = Expense::where('user_id', $user->id)
-            ->whereBetween('spent_on', [
-                $this->weekStart()->toDateString(),
-                $this->weekEnd()->toDateString(),
-            ])
+            ->whereDate('spent_on', '>=', $this->weekStart()->toDateString())
+            ->whereDate('spent_on', '<=', $this->weekEnd()->toDateString())
             ->orderByDesc('spent_on')
             ->orderByDesc('id')
             ->get();
@@ -94,10 +96,8 @@ class WeeklySummary
     public function spentLastWeek(): float
     {
         return (float) Expense::where('user_id', $this->user->id)
-            ->whereBetween('spent_on', [
-                now()->subWeek()->startOfWeek()->toDateString(),
-                now()->subWeek()->endOfWeek()->toDateString(),
-            ])
+            ->whereDate('spent_on', '>=', now()->subWeek()->startOfWeek()->toDateString())
+            ->whereDate('spent_on', '<=', now()->subWeek()->endOfWeek()->toDateString())
             ->sum('amount');
     }
 
@@ -105,17 +105,15 @@ class WeeklySummary
     public function savedThisWeek(): float
     {
         return (float) SavingsDeposit::where('user_id', $this->user->id)
-            ->whereBetween('deposited_on', [
-                $this->weekStart()->toDateString(),
-                $this->weekEnd()->toDateString(),
-            ])
+            ->whereDate('deposited_on', '>=', $this->weekStart()->toDateString())
+            ->whereDate('deposited_on', '<=', $this->weekEnd()->toDateString())
             ->sum('amount');
     }
 
-    /** Weekly allowance = all the budget limits added together (spending + savings). */
+    /** Weekly allowance = every category's weekly limit added together (spending + savings). */
     public function allowance(): float
     {
-        return (float) array_sum(config('estudyantipid.budgets')) + (float) config('estudyantipid.savings_budget');
+        return (float) Category::sum('weekly_limit');
     }
 
     public function left(): float
@@ -130,19 +128,25 @@ class WeeklySummary
     }
 
     /**
-     * The four budget cards: three spending budgets plus Savings.
+     * One budget card per category (set on the admin Categories page).
      * status: 'ok' | 'near' | 'over' (Savings is always 'ok': filling it up is good).
      */
     public function budgets(): array
     {
         $spent = $this->spentByCategory();
+        $saved = $this->savedThisWeek();
         $cards = [];
 
-        foreach (config('estudyantipid.budgets') as $category => $limit) {
-            $cards[] = $this->card($category, (float) $spent->get($category, 0), (float) $limit, true);
-        }
+        foreach (Category::orderBy('id')->get() as $category) {
+            $isSpending = ! $category->is_savings;
 
-        $cards[] = $this->card('Savings', $this->savedThisWeek(), (float) config('estudyantipid.savings_budget'), false);
+            $cards[] = $this->card(
+                $category->name,
+                $isSpending ? (float) $spent->get($category->name, 0) : $saved,
+                (float) $category->weekly_limit,
+                $isSpending
+            );
+        }
 
         return $cards;
     }
@@ -154,9 +158,9 @@ class WeeklySummary
         $status = 'ok';
         if ($isSpending) {
             $status = match (true) {
-                $percent > 100              => 'over',
+                $percent > 100               => 'over',
                 $percent >= self::NEAR_LIMIT => 'near',
-                default                     => 'ok',
+                default                      => 'ok',
             };
         }
 

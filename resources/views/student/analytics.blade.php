@@ -9,10 +9,14 @@
 @endphp
 
 @section('content')
-    <header>
-        <h1 class="page-title">Analytics</h1>
-        <p class="page-sub">Your weekly and monthly spending habits.</p>
-    </header>
+    <div class="page-head">
+        <header>
+            <h1 class="page-title">Analytics</h1>
+            <p class="page-sub">Your weekly spending habits.</p>
+        </header>
+
+        <a href="{{ route('student.reports') }}" class="btn-outline">Monthly reports</a>
+    </div>
 
     {{-- Daily spend chart --}}
     <section class="card analytics-chart">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,8 @@ class RegisterController extends Controller
             'password' => $data['password'], // hashed by the User model cast
             'role'     => 'student',
         ]);
+
+        ActivityLog::record($user->name . ' registered');
 
         Auth::login($user);
         $request->session()->regenerate();

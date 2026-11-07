@@ -2,31 +2,19 @@
 
 return [
     // Options for the "College" dropdown on the Create Account page.
-    // Only CCIS appears in the Figma design, so add the rest of your colleges here.
+    // These are the colleges that appear in the Figma design, so add the rest of yours here.
     'colleges' => [
         'CCIS',
+        'CAS',
+        'COE',
+        'CBA',
     ],
 
-    // Options for the category dropdown on the Expenses page.
-    // Later the admin "Categories" screen will manage these from the database instead.
-    'categories' => [
-        'Food',
-        'Transport',
-        'School supplies',
-    ],
+    // Weekly limit (in pesos) given to a category an admin adds on the Categories page.
+    // Categories themselves now live in the database (admin > Categories).
+    'default_category_limit' => 300,
 
-    // Weekly spending limit per category (in pesos), shown on the Budgets page.
-    // Same for every student for now. Editing limits per student comes later.
-    'budgets' => [
-        'Food'            => 1100,
-        'Transport'       => 600,
-        'School supplies' => 500,
-    ],
-
-    // Weekly amount a student aims to set aside (the "Savings" card on Budgets).
-    'savings_budget' => 400,
-
-    // The three tabs on the "Message us" page.
+    // The three tabs on the "Message us" page (and the filters on admin Feedback).
     'message_types' => [
         'report' => [
             'label'  => 'Report',

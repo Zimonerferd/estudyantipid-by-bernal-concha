@@ -49,6 +49,16 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt([...$credentials, 'role' => $role])) {
+            if (Auth::user()->suspended_at) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()
+                    ->withErrors(['email' => 'This account has been suspended. Please contact the admin.'])
+                    ->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             return redirect()->intended(

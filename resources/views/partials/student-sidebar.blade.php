@@ -8,6 +8,7 @@
         ['route' => 'student.budgets',   'icon' => '◔', 'label' => 'Budgets'],
         ['route' => 'student.goals',     'icon' => '✦', 'label' => 'Savings goals'],
         ['route' => 'student.analytics', 'icon' => '▥', 'label' => 'Analytics'],
+        ['route' => 'student.reports',   'icon' => '▤', 'label' => 'Monthly reports'],
     ];
 @endphp
 
