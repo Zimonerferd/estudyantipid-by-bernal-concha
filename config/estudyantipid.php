@@ -8,6 +8,7 @@ return [
         'CAS',
         'COE',
         'CBA',
+        'CTE',
     ],
 
     // Weekly limit (in pesos) given to a category an admin adds on the Categories page.
